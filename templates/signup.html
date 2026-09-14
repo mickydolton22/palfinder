@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PalFinder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+{% if session.username %}
+<script src="{{ url_for('static', filename='notifications.js') }}"></script>
+{% endif %}
+<body>
+    <div class="heading">
+        <a href="{{ url_for('homepage') }}"><h1>Pal Finder</h1></a>
+        <h2>The centre of pet adoption.</h2>
+        {% if session.is_developer %}
+            <a href="{{ url_for('developer') }}" class="dev-corner-link">DEV</a>
+        {% endif %}
+    </div>  
+    <div class="header-underbar">
+        <div class="search-bar">
+            <label for="sitesearch"></label>
+            <input type="search" class="search-bar" id="sitesearch" name="sitesearch">
+            <button type="submit">Search</button>
+        </div>
+        <div class="buttonlinksunderhead">
+            <a href="{{ url_for('mission') }}">Our Mission</a>
+        </div>
+        <div class="buttonlinksunderhead">
+            <a href="{{ url_for('petdatabase') }}">Pet Database</a>
+        </div>
+        <div class="buttonlinksunderhead">
+            <a href="{{ url_for('petpersonalityquiz') }}">Take the Pet Personality Quiz</a>
+        </div>
+        <div class="loginbuttonstyle">
+            {% if session.username %}
+                <a href="{{ url_for('logout') }}">{{ session.username }} (Logout)</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">LOGIN</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="loginarea">
+        <br>
+        <br>
+        <br>
+        <h2>Register your New Information</h2>
+        <form class="loginform" method="POST" action="{{ url_for('signup') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <label for="username">New User Here:</label><br>
+            <input type="text" id="username" name="username"><br>
+            <label for="userpassword">New Password Here:</label><br>
+            <input type="password" id="userpassword" name="userpassword"><br>
+            <label for="confirmuserpassword">Retype Password</label><br>
+            <input type="password" id="confirmuserpassword" name="confirmuserpassword"><br>
+            <button type="submit">REGISTER</button>
+        </form>
+        <script>
+            const password = document.getElementById("userpassword");
+            const confirmPassword = document.getElementById("confirmuserpassword");
+
+            function validatePassword() {
+                if (password.value !== confirmPassword.value) {
+                confirmPassword.setCustomValidity("Passwords do not match");
+                } else {
+                confirmPassword.setCustomValidity("");
+                }   
+            }                 
+            password.onchange = validatePassword;
+            confirmPassword.onkeyup = validatePassword;
+        </script>
+        <br>
+        <br>
+    </div>
+</body>

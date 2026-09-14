@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PalFinder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+{% if session.username %}
+<script src="{{ url_for('static', filename='notifications.js') }}"></script>
+{% endif %}
+<body>
+    <div class="heading">
+        <a href="{{ url_for('homepage') }}"><h1>Pal Finder</h1></a>
+        <h2>The centre of pet adoption.</h2>
+        {% if session.is_developer %}
+            <a href="{{ url_for('developer') }}" class="dev-corner-link">DEV</a>
+        {% endif %}
+    </div>  
+    <div class="header-underbar">
+        <div class="search-bar">
+            <label for="sitesearch"></label>
+            <input type="search" class="search-bar" id="sitesearch" name="sitesearch">
+            <button type="submit">Search</button>
+        </div>
+        <div class="buttonlinksunderhead">
+            <a href="{{ url_for('mission') }}">Our Mission</a>
+        </div>
+        <div class="buttonlinksunderhead">
+            <a href="petdatabase">Pet Database</a>
+        </div>
+        <div class="buttonlinksunderhead">
+            <a href="petpersonalityquiz">Take the Pet Personality Quiz</a>
+        </div>
+        <div class="loginbuttonstyle">
+            {% if session.username %}
+                <a href="{{ url_for('logout') }}">{{ session.username }} (Logout)</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">LOGIN</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="loginarea">
+        <br>
+        <br>
+        <br>
+        <h2>Login Here</h2>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                 {% for message in messages %}
+                    <p class="flash-message">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form class="loginform" method="POST" action="{{ url_for('login') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            <label for="username">Enter User Here:</label><br>
+            <input type="text" id="username" name="username"><br>
+            <label for="userpassword">Enter Password Here:</label><br>
+            <input type="password" id="userpassword" name="userpassword"><br>
+            <button type="submit">LOGIN</button>
+        </form>
+        <br>
+        <br>
+        <div class="registerlink">
+            Aren't registered?
+            <a href="{{ url_for('signup') }}">Register Here!</a>
+        </div>
+    </div>
+</body>

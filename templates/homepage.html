@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PalFinder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+{% if session.username %}
+<script src="{{ url_for('static', filename='notifications.js') }}"></script>
+{% endif %}
+<body>
+    <div class="heading">
+        <a href="{{ url_for('homepage') }}"><h1>Pal Finder</h1></a>
+        <h2>The centre of pet adoption.</h2>
+        {% if session.is_developer %}
+            <a href="{{ url_for('developer') }}" class="dev-corner-link">DEV</a>
+        {% endif %}
+    </div>  
+    <div class="header-underbar">
+        <div class="search-bar">
+            <label for="sitesearch"></label>
+            <input type="search" class="search-bar" id="sitesearch" name="sitesearch">
+            <button type="submit">Search</button>
+        </div>
+        <div class="buttonlinksunderhead">
+            <a href="{{ url_for('mission') }}">Our Mission</a>
+        </div>
+        <div class="buttonlinksunderhead">
+            <a href="petdatabase">Pet Database</a>
+        </div>
+        <div class="buttonlinksunderhead">
+            <a href="petpersonalityquiz">Take the Pet Personality Quiz</a>
+        </div>
+        {% if session.username %}
+        <div class="notification-wrapper">
+            <div class="notification-bell" id="notif-bell">
+                🔔
+                <span class="notif-indicator" id="notif-indicator"></span>
+            </div>
+            <div class="notif-overlay" id="notif-overlay">
+                <h3>Notifications</h3>
+                <div id="notif-list"></div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="loginbuttonstyle">
+            {% if session.username %}
+                <a href="{{ url_for('logout') }}">{{ session.username }} (Logout)</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">LOGIN</a>
+            {% endif %}
+        </div>
+    </div>
+    <section class="homepage-split">
+    <div class="split-pet">
+        {% if featured_pet %}
+            <h2>Meet {{ featured_pet.name }}</h2>
+            <img src="{{ url_for('static', filename='images/') }}{{ featured_pet.image }}" alt="{{ featured_pet.name }}">
+            <p><strong>Species:</strong> {{ featured_pet.species }}</p>
+            <p><strong>Age:</strong> {{ featured_pet.age }}</p>
+            <p><strong>Description:</strong> {{ featured_pet.description }}</p>
+            <p><strong>Date of Intake:</strong> {{ featured_pet.date_of_intake }}</p>
+            <a href="{{ url_for('petdatabase') }}" class="cta-button">See More Pets Like {{ featured_pet.name }}</a>
+        {% else %}
+            <h2>No Pets Currently Available</h2>
+            <p>Check back soon, or take a look at our full database anyway.</p>
+            <a href="{{ url_for('petdatabase') }}" class="cta-button">Browse the Pet Database</a>
+        {% endif %}
+    </div>
+
+    <div class="split-mission">
+        <h2>Our Mission</h2>
+        <p>
+            PalFinder exists because too many animals end up without a home, and too many
+            people looking to adopt don't know where to start. We built this site to be a
+            central, searchable home for registered animals that don't yet have owners.
+        </p>
+        <a href="{{ url_for('mission') }}" class="cta-button-outline">Read Our Full Mission</a>
+    </div>
+    </section>
+</body>
+</html>

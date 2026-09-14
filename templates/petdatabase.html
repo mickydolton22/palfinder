@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Pet Database - PalFinder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+{% if session.username %}
+<script src="{{ url_for('static', filename='notifications.js') }}"></script>
+{% endif %}
+<body>
+
+    <div class="heading">
+        <a href="{{ url_for('homepage') }}"><h1>Pal Finder</h1></a>
+        <h2>The centre of pet adoption.</h2>
+        {% if session.is_developer %}
+            <a href="{{ url_for('developer') }}" class="dev-corner-link">DEV</a>
+        {% endif %}        
+    </div>  
+
+    <div class="header-underbar">
+        <div class="search-bar">
+            <label for="sitesearch"></label>
+            <input type="search" class="search-bar" id="sitesearch" name="sitesearch">
+            <button type="submit">Search</button>
+        </div>
+        <div class="buttonlinksunderhead">
+            <a href="{{ url_for('mission') }}">Our Mission</a>
+        </div>
+        <div class="buttonlinksunderhead">
+            <a href="{{ url_for('petdatabase') }}">Pet Database</a>
+        </div>
+        <div class="buttonlinksunderhead">
+            <a href="{{ url_for('petpersonalityquiz') }}">Take the Pet Personality Quiz</a>
+        </div>
+        <div class="loginbuttonstyle">
+            {% if session.username %}
+                <a href="{{ url_for('logout') }}">{{ session.username }} (Logout)</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">LOGIN</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <section class="petdb-intro">
+        <h2>Browse Our Pets</h2>
+        <p>
+            Every animal listed here is pulled live from our shelter database, so what you see is
+            always current, nothing is added or removed manually. Use the filters below to narrow
+            down by species, age, availability, or personality traits, or search by name directly.
+            Click on any pet's row to see their full profile, including their photo, description,
+            and the date they came into our care.
+        </p>
+        <p>
+            If you're logged in, you can also register a new pet up for adoption yourself using the
+            form at the bottom of this page. Wait a minute, and your listing will appear
+            in the table above immediately!
+        </p>
+    </section>
+
+    <section class="petdb-section">
+        <h2>Find Your Pal</h2>
+
+        <div class="petdb-filters">
+            <div class="filter-group">
+                <label for="filter-species">Species</label>
+                <select id="filter-species">
+                    <option value="">All</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="filter-age-min">Min Age</label>
+                <select id="filter-age-min">
+                    <option value="">Any</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="filter-age-max">Max Age</label>
+                <select id="filter-age-max">
+                    <option value="">Any</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="filter-availability">Availability</label>
+                <select id="filter-availability">
+                    <option value="">All</option>
+                    <option value="Available">Available</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Adopted">Adopted</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="filter-search">Search by name</label>
+                <input type="text" id="filter-search" placeholder="e.g. Willow">
+            </div>
+
+            <div class="filter-group">
+                <label for="filter-sort">Sort by</label>
+                <select id="filter-sort">
+                    <option value="name-asc">Name (A–Z)</option>
+                    <option value="name-desc">Name (Z–A)</option>
+                    <option value="age-asc">Age (youngest first)</option>
+                    <option value="age-desc">Age (oldest first)</option>
+                    <option value="intake-desc">Newest intake</option>
+                    <option value="intake-asc">Oldest intake</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filter-group tags-group">
+            <label>Traits</label>
+            <div id="filter-tags" class="tag-checkboxes"></div>
+        </div>
+
+        <p id="results-count" class="results-count"></p>
+
+        <table class="pet-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Adoption Availability</th>
+                </tr>
+            </thead>
+            <tbody id="pet-table-body">
+                <!-- rows injected by JavaScript -->
+            </tbody>
+        </table>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="flash-message">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% if session.username %}
+        <section class="petdb-register">
+            <h2>Register a Pet for Adoption</h2>
+            <form method="POST" action="{{ url_for('registerpet') }}" enctype="multipart/form-data" class="register-pet-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="form-row">
+                <label for="pet-name">Pet Name</label>
+                <input type="text" id="pet-name" name="name" required>
+            </div>
+
+            <div class="form-row">
+                <label for="pet-species">Species</label>
+                <input type="text" id="pet-species" name="species" list="species-options" required>
+                <datalist id="species-options">
+                    <option value="Dog">
+                    <option value="Cat">
+                    <option value="Rabbit">
+                    <option value="Guinea Pig">
+                    <option value="Bird">
+                </datalist>
+            </div>
+
+            <div class="form-row">
+                <label for="pet-age">Age (years)</label>
+                <input type="number" id="pet-age" name="age" min="0" max="30" required>
+            </div>
+
+            <div class="form-row">
+                <label for="pet-availability">Adoption Availability</label>
+                <select id="pet-availability" name="adoption_availability" required>
+                    <option value="Available">Available</option>
+                    <option value="Pending">Pending</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label for="pet-description">Traits (one-word, space separated)</label>
+                <input type="text" id="pet-description" name="description" placeholder="e.g. Playful Gentle Loyal" required>
+            </div>
+
+            <div class="form-row">
+                <label for="pet-image">Photo</label>
+                <input type="file" id="pet-image" name="image" accept="image/png, image/jpeg, image/gif" required>
+            </div>
+
+            <button type="submit">Register Pet</button>
+            </form>
+        </section>
+    {% else %}
+    <section class="petdb-register petdb-register-locked">
+        <p>You must be <a href="{{ url_for('login') }}">logged in</a> to register a pet for adoption.</p>
+    </section>
+    {% endif %}
+    </section>
+
+    <script>
+        const allPets = {{ pets_json | safe }};
+
+        const tbody = document.getElementById('pet-table-body');
+        const speciesSelect = document.getElementById('filter-species');
+        const ageMinSelect = document.getElementById('filter-age-min');
+        const ageMaxSelect = document.getElementById('filter-age-max');
+        const availabilitySelect = document.getElementById('filter-availability');
+        const searchInput = document.getElementById('filter-search');
+        const sortSelect = document.getElementById('filter-sort');
+        const tagContainer = document.getElementById('filter-tags');
+        const resultsCount = document.getElementById('results-count');
+
+        // ----- Build filter option lists dynamically from the actual data -----
+        const speciesSet = new Set();
+        const tagSet = new Set();
+        let minAge = Infinity, maxAge = 0;
+
+        allPets.forEach(pet => {
+            speciesSet.add(pet.species);
+            pet.description.split(' ').forEach(tag => tagSet.add(tag));
+            minAge = Math.min(minAge, pet.age);
+            maxAge = Math.max(maxAge, pet.age);
+        });
+
+        [...speciesSet].sort().forEach(species => {
+            const opt = document.createElement('option');
+            opt.value = species;
+            opt.textContent = species;
+            speciesSelect.appendChild(opt);
+        });
+
+        for (let age = minAge; age <= maxAge; age++) {
+            const optMin = document.createElement('option');
+            optMin.value = age;
+            optMin.textContent = age;
+            ageMinSelect.appendChild(optMin);
+
+            const optMax = document.createElement('option');
+            optMax.value = age;
+            optMax.textContent = age;
+            ageMaxSelect.appendChild(optMax);
+        }
+
+        [...tagSet].sort().forEach(tag => {
+            const label = document.createElement('label');
+            label.className = 'tag-checkbox';
+            label.innerHTML = `<input type="checkbox" value="${tag}"> ${tag}`;
+            tagContainer.appendChild(label);
+        });
+
+        // ----- Filtering, sorting, rendering -----
+        function getCheckedTags() {
+            return [...tagContainer.querySelectorAll('input:checked')].map(cb => cb.value);
+        }
+
+        function applyFilters() {
+            const species = speciesSelect.value;
+            const ageMin = ageMinSelect.value ? parseInt(ageMinSelect.value) : null;
+            const ageMax = ageMaxSelect.value ? parseInt(ageMaxSelect.value) : null;
+            const availability = availabilitySelect.value;
+            const search = searchInput.value.trim().toLowerCase();
+            const checkedTags = getCheckedTags();
+
+            let filtered = allPets.filter(pet => {
+                if (species && pet.species !== species) return false;
+                if (ageMin !== null && pet.age < ageMin) return false;
+                if (ageMax !== null && pet.age > ageMax) return false;
+                if (availability && pet.adoption_availability !== availability) return false;
+                if (search && !pet.name.toLowerCase().includes(search)) return false;
+                if (checkedTags.length > 0) {
+                    const petTags = pet.description.split(' ');
+                    const hasAll = checkedTags.every(t => petTags.includes(t));
+                    if (!hasAll) return false;
+                }
+                return true;
+            });
+
+            const sortVal = sortSelect.value;
+            filtered.sort((a, b) => {
+                switch (sortVal) {
+                    case 'name-asc': return a.name.localeCompare(b.name);
+                    case 'name-desc': return b.name.localeCompare(a.name);
+                    case 'age-asc': return a.age - b.age;
+                    case 'age-desc': return b.age - a.age;
+                    case 'intake-desc': return new Date(b.date_of_intake) - new Date(a.date_of_intake);
+                    case 'intake-asc': return new Date(a.date_of_intake) - new Date(b.date_of_intake);
+                    default: return 0;
+                }
+            });
+
+            renderTable(filtered);
+        }
+
+        function renderTable(pets) {
+            tbody.innerHTML = '';
+            resultsCount.textContent = `${pets.length} pet${pets.length === 1 ? '' : 's'} found`;
+
+            pets.forEach(pet => {
+                const row = document.createElement('tr');
+                row.className = 'pet-row';
+                row.innerHTML = `
+                    <td>${pet.name}</td>
+                    <td>${pet.age}</td>
+                    <td>${pet.adoption_availability}</td>
+                `;
+
+                const detailRow = document.createElement('tr');
+                detailRow.className = 'pet-detail-row';
+                detailRow.innerHTML = `
+                    <td colspan="3">
+                        <div class="pet-detail">
+                            <img src="{{ url_for('static', filename='images/') }}${pet.image}" alt="${pet.name}">
+                            <div class="pet-detail-text">
+                                <p><strong>Species:</strong> ${pet.species}</p>
+                                <p><strong>Description:</strong> ${pet.description}</p>
+                                <p><strong>Date of Intake:</strong> ${pet.date_of_intake}</p>
+                                <p><strong>Adoption Availability:</strong> ${pet.adoption_availability}</p>
+                            </div>
+                        </div>
+                    </td>
+                `;
+
+                row.addEventListener('click', () => {
+                    const isOpen = detailRow.classList.contains('open');
+                    document.querySelectorAll('.pet-detail-row.open').forEach(r => r.classList.remove('open'));
+                    document.querySelectorAll('.pet-row.active').forEach(r => r.classList.remove('active'));
+                    if (!isOpen) {
+                        detailRow.classList.add('open');
+                        row.classList.add('active');
+                    }
+                });
+
+                tbody.appendChild(row);
+                tbody.appendChild(detailRow);
+            });
+        }
+
+        [speciesSelect, ageMinSelect, ageMaxSelect, availabilitySelect, sortSelect].forEach(el =>
+            el.addEventListener('change', applyFilters)
+        );
+        searchInput.addEventListener('input', applyFilters);
+        tagContainer.addEventListener('change', applyFilters);
+
+        applyFilters(); // initial render
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Pet Personality Quiz - PalFinder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="heading">
+        <a href="{{ url_for('homepage') }}"><h1>Pal Finder</h1></a>
+        <h2>The centre of pet adoption.</h2>
+    </div>
+
+    <div class="header-underbar">
+        <div class="search-bar">
+            <label for="sitesearch"></label>
+            <input type="search" class="search-bar" id="sitesearch" name="sitesearch">
+            <button type="submit">Search</button>
+        </div>
+        <div class="buttonlinksunderhead">
+            <a href="{{ url_for('mission') }}">Our Mission</a>
+        </div>
+        <div class="buttonlinksunderhead">
+            <a href="{{ url_for('petdatabase') }}">Pet Database</a>
+        </div>
+        <div class="buttonlinksunderhead">
+            <a href="{{ url_for('petpersonalityquiz') }}">Take the Pet Personality Quiz</a>
+        </div>
+        <div class="loginbuttonstyle">
+            {% if session.username %}
+                <a href="{{ url_for('logout') }}">{{ session.username }} (Logout)</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">LOGIN</a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if not submitted %}
+    <section class="quiz-section">
+        <h2>Find Your Perfect Pal</h2>
+        <p>Answer a few questions and we'll match you with pets from our database who fit your personality.</p>
+
+        <form method="POST" action="{{ url_for('petpersonalityquiz') }}" class="quiz-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="quiz-question">
+                <h3>1. If you were a superhero, what would your power be?</h3>
+                <label><input type="radio" name="filler_1" value="flight" required> Flight</label>
+                <label><input type="radio" name="filler_1" value="invisibility"> Invisibility</label>
+                <label><input type="radio" name="filler_1" value="strength"> Super strength</label>
+                <label><input type="radio" name="filler_1" value="time_travel"> Time travel</label>
+            </div>
+
+            <div class="quiz-question">
+                <h3>2. How would you like to spend a Saturday afternoon with your pet?</h3>
+                <label><input type="radio" name="trait_1" value="Playful" required> Playing fetch at the park</label>
+                <label><input type="radio" name="trait_1" value="Calm"> Curling up with a book together</label>
+                <label><input type="radio" name="trait_1" value="Energetic"> Going on a long, adventurous hike</label>
+                <label><input type="radio" name="trait_1" value="Friendly"> Meeting new people and other pets</label>
+            </div>
+
+            <div class="quiz-question">
+                <h3>3. Pick a dessert.</h3>
+                <label><input type="radio" name="filler_2" value="ice_cream" required> Ice cream</label>
+                <label><input type="radio" name="filler_2" value="cake"> Cake</label>
+                <label><input type="radio" name="filler_2" value="cookies"> Cookies</label>
+                <label><input type="radio" name="filler_2" value="pie"> Pie</label>
+            </div>
+
+            <div class="quiz-question">
+                <h3>4. Which trait matters most to you in a companion?</h3>
+                <label><input type="radio" name="trait_2" value="Loyal" required> Loyalty</label>
+                <label><input type="radio" name="trait_2" value="Independent"> Independence</label>
+                <label><input type="radio" name="trait_2" value="Affectionate"> Affection</label>
+                <label><input type="radio" name="trait_2" value="Curious"> Curiosity</label>
+            </div>
+
+            <div class="quiz-question">
+                <h3>5. Mountains or beach?</h3>
+                <label><input type="radio" name="filler_3" value="mountains" required> Mountains</label>
+                <label><input type="radio" name="filler_3" value="beach"> Beach</label>
+            </div>
+
+            <div class="quiz-question">
+                <h3>6. How much daily attention can you realistically give a pet?</h3>
+                <label><input type="radio" name="trait_3" value="Energetic" required> Lots of active playtime</label>
+                <label><input type="radio" name="trait_3" value="Quiet"> Quiet, low-key companionship</label>
+                <label><input type="radio" name="trait_3" value="Independent"> Some, but not constant</label>
+                <label><input type="radio" name="trait_3" value="Cuddly"> As much affection as possible</label>
+            </div>
+
+            <div class="quiz-question">
+                <h3>7. What's your ideal weekend breakfast?</h3>
+                <label><input type="radio" name="filler_4" value="pancakes" required> Pancakes</label>
+                <label><input type="radio" name="filler_4" value="eggs"> Eggs and toast</label>
+                <label><input type="radio" name="filler_4" value="cereal"> Cereal</label>
+                <label><input type="radio" name="filler_4" value="skip"> Skip breakfast entirely</label>
+            </div>
+
+            <div class="quiz-question">
+                <h3>8. Your ideal pet greets a stranger at the door by...</h3>
+                <label><input type="radio" name="trait_4" value="Playful" required> Excitedly jumping around</label>
+                <label><input type="radio" name="trait_4" value="Protective"> Watching cautiously</label>
+                <label><input type="radio" name="trait_4" value="Shy"> Hiding shyly</label>
+                <label><input type="radio" name="trait_4" value="Curious"> Curiously sniffing them</label>
+            </div>
+
+            <div class="quiz-question">
+                <h3>9. Pick a word that describes your dream companion.</h3>
+                <label><input type="radio" name="trait_5" value="Gentle" required> Gentle</label>
+                <label><input type="radio" name="trait_5" value="Vocal"> Vocal</label>
+                <label><input type="radio" name="trait_5" value="Obedient"> Obedient</label>
+                <label><input type="radio" name="trait_5" value="Aloof"> Aloof</label>
+            </div>
+
+            <div class="quiz-question">
+                <h3>10. If you had a theme song, what genre would it be?</h3>
+                <label><input type="radio" name="filler_5" value="pop" required> Pop</label>
+                <label><input type="radio" name="filler_5" value="rock"> Rock</label>
+                <label><input type="radio" name="filler_5" value="classical"> Classical</label>
+                <label><input type="radio" name="filler_5" value="jazz"> Jazz</label>
+            </div>
+
+            <button type="submit">See My Matches</button>
+        </form>
+    </section>
+
+    {% else %}
+    <section class="quiz-section">
+        <h2>Your Matches</h2>
+
+        {% if matches %}
+        <p>Based on your answers, here are the pets from our database who fit best:</p>
+        <div class="quiz-results-grid">
+            {% for pet in matches %}
+            <div class="quiz-result-card">
+                <img src="{{ url_for('static', filename='images/') }}{{ pet.image }}" alt="{{ pet.name }}">
+                <h3>{{ pet.name }}</h3>
+                <p><strong>Species:</strong> {{ pet.species }}</p>
+                <p><strong>Age:</strong> {{ pet.age }}</p>
+                <p><strong>Traits:</strong> {{ pet.description }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        <a href="{{ url_for('petdatabase') }}" class="cta-button">View Full Pet Database</a>
+        {% else %}
+        <p>We couldn't find a pet matching your answers right now — but take a look at the full database, your perfect pal might still be there.</p>
+        <a href="{{ url_for('petdatabase') }}" class="cta-button">Browse the Pet Database</a>
+        {% endif %}
+
+        <a href="{{ url_for('petpersonalityquiz') }}" class="cta-button-outline">Retake the Quiz</a>
+    </section>
+    {% endif %}
+
+</body>
+</html>

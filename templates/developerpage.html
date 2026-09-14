@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Developer - PalFinder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="heading">
+        <a href="{{ url_for('homepage') }}"><h1>Pal Finder</h1></a>
+        <h2>Developer Panel</h2>
+    </div>
+
+    <section class="dev-panel">
+        <h2>Pending Pet Submissions</h2>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <p class="flash-message">{{ message }}</p>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        {% if submissions %}
+        <div class="submission-grid">
+            {% for sub in submissions %}
+            <div class="submission-card">
+                <img src="{{ url_for('static', filename='images/') }}{{ sub.image }}" alt="{{ sub.name }}">
+                <h3>{{ sub.name }}</h3>
+                <p><strong>Species:</strong> {{ sub.species }}</p>
+                <p><strong>Age:</strong> {{ sub.age }}</p>
+                <p><strong>Availability:</strong> {{ sub.adoption_availability }}</p>
+                <p><strong>Description:</strong> {{ sub.description }}</p>
+                <p><strong>Date of Intake:</strong> {{ sub.date_of_intake }}</p>
+                <p class="submitted-by">Submitted by: {{ sub.submitted_by }}</p>
+
+                <div class="submission-actions">
+                    <form method="POST" action="{{ url_for('approve_pet', submission_id=sub.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="approve-btn">Approve</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('deny_pet', submission_id=sub.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="deny-btn">Deny</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>No pending submissions right now.</p>
+        {% endif %}
+    </section>
+</body>
+</html>

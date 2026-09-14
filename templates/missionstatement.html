@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Our Mission - PalFinder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+{% if session.username %}
+<script src="{{ url_for('static', filename='notifications.js') }}"></script>
+{% endif %}
+<body>
+
+    <div class="heading">
+        <a href="{{ url_for('homepage') }}"><h1>Pal Finder</h1></a>
+        <h2>The centre of pet adoption.</h2>
+        {% if session.is_developer %}
+            <a href="{{ url_for('developer') }}" class="dev-corner-link">DEV</a>
+        {% endif %}
+    </div>  
+
+    <div class="header-underbar">
+        <div class="search-bar">
+            <label for="sitesearch"></label>
+            <input type="search" class="search-bar" id="sitesearch" name="sitesearch">
+            <button type="submit">Search</button>
+        </div>
+        <div class="buttonlinksunderhead">
+            <a href="{{ url_for('mission') }}">Our Mission</a>
+        </div>
+        <div class="buttonlinksunderhead">
+            <a href="{{ url_for('petdatabase') }}">Pet Database</a>
+        </div>
+        <div class="buttonlinksunderhead">
+            <a href="{{ url_for('petpersonalityquiz') }}">Take the Pet Personality Quiz</a>
+        </div>
+        <div class="loginbuttonstyle">
+            {% if session.username %}
+                <a href="{{ url_for('logout') }}">{{ session.username }} (Logout)</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">LOGIN</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ===== Mission statement ===== -->
+    <section class="mission-statement">
+        <h2>Why We Do This</h2>
+        <p>
+            PalFinder exists because too many animals end up without a home, and too many
+            people looking to adopt don't know where to start. We built this site to act as a
+            central, searchable home for registered animals that don't yet have owners, pulling
+            every listing straight from our database so information stays accurate and up to date.
+        </p>
+        <p>
+            We also believe adoption works best as a match, not a guessing game. That's why
+            we're building a matching system: tell us the traits you're looking for in a pet, and
+            we'll compare your preferences against the tags attached to every animal in our
+            database to help you find the companion who actually fits your life.
+        </p>
+    </section>
+
+    <!-- ===== Video ===== -->
+    <section class="mission-video">
+        <h2>The Difference Adoption Makes</h2>
+        <div class="video-wrapper">
+            <!-- Paste your YouTube embed code here, replacing this iframe -->
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/ieHv-6UUftc?si=X4C0PUNH4pjpCYPj" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+    </section>
+
+    <!-- ===== Statistics ===== -->
+    <section class="mission-stats">
+        <h2>Our Impact So Far</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-number">1,248</span>
+                <span class="stat-label">Animals rehomed</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">312</span>
+                <span class="stat-label">Active listings right now</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">96%</span>
+                <span class="stat-label">Adopters who'd recommend us</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">18</span>
+                <span class="stat-label">Partner shelters</span>
+            </div>
+        </div>
+
+        <div class="stats-chart">
+            <h3>Animals Rehomed by Type</h3>
+            <div class="bar-chart">
+                <div class="bar-row">
+                    <span class="bar-label">Dogs</span>
+                    <div class="bar-track"><div class="bar-fill" style="width: 85%;">612</div></div>
+                </div>
+                <div class="bar-row">
+                    <span class="bar-label">Cats</span>
+                    <div class="bar-track"><div class="bar-fill" style="width: 70%;">498</div></div>
+                </div>
+                <div class="bar-row">
+                    <span class="bar-label">Rabbits</span>
+                    <div class="bar-track"><div class="bar-fill" style="width: 15%;">98</div></div>
+                </div>
+                <div class="bar-row">
+                    <span class="bar-label">Other</span>
+                    <div class="bar-track"><div class="bar-fill" style="width: 6%;">40</div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Adopter stories ===== -->
+    <section class="mission-stories">
+        <h2>Stories From Our Community</h2>
+        <div class="story-grid">
+            <div class="story-card">
+                <img src="{{ url_for('static', filename='images/adopter-story-1.png') }}" alt="Adopted dog with new owner">
+                <p class="story-quote">
+                    "We weren't sure what breed would suit our small apartment. The tag-matching
+                    tool pointed us to Biscuit, a three-year-old golden retreiver, and it's been the
+                    easiest adjustment we could have hoped for."
+                </p>
+                <p class="story-author">— Jordan T., adopted Biscuit in March</p>
+            </div>
+
+            <div class="story-card">
+                <img src="{{ url_for('static', filename='images/adopter-story-2.png') }}" alt="Adopted cat in new home">
+                <p class="story-quote">
+                    "Our cat Willow had been listed for almost a year with no interest before we
+                    found her. She's shy for about a week and then completely takes over the house."
+                </p>
+                <p class="story-author">— Priya M., adopted Willow in June</p>
+            </div>
+
+            <div class="story-card">
+                <img src="{{ url_for('static', filename='images/adopter-story-3.png') }}" alt="Adopted rabbit with owner">
+                <p class="story-quote">
+                    "I didn't even know rabbits were listed here until I searched. The shelter
+                    team answered every question we had before we ever met him in person."
+                </p>
+                <p class="story-author">— Sam K., adopted Clover in August</p>
+            </div>
+        </div>
+    </section>
+    <section class="mission-cta">
+        <h2>Ready to Meet Your New Pal?</h2>
+        <p>
+            Every animal you've just read about started out as a listing like the ones waiting for
+            you right now. If today's the day you're ready to look, our full database is searchable
+            by age, species, and personality! Take a look and see who's waiting.
+        </p>
+        <a href="{{ url_for('petdatabase') }}" class="cta-button">Browse the Pet Database</a>
+    </section>
+
+    <!-- ===== Contact footer ===== -->
+    <footer class="mission-contact">
+        <h2>Get In Touch</h2>
+        <p>Email: <a href="mailto:hello@palfinder.example">hello@palfinder.example</a></p>
+        <p>Phone: (02) 5550 1234</p>
+        <p>Address: 42 Wattle Street, Sydney NSW 2000</p>
+        <p class="contact-disclaimer">(Placeholder contact details for demonstration purposes.)</p>
+    </footer>
+
+</body>
+</html>
